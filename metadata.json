@@ -1,0 +1,6 @@
+{
+  "name": "Lật Thẻ Thiết Bị Tin Học",
+  "description": "Trò chơi giáo dục lật thẻ ghi nhớ 10 thiết bị tin học dành cho học sinh THCS và THPT.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
