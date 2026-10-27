@@ -4,16 +4,26 @@
  */
 
 import React from 'react';
-import { CardItem } from '../types';
+import { CardItem, DifficultyLevel } from '../types';
 import { DeviceIconComponent } from './DeviceIcons';
 
 interface CardProps {
   card: CardItem;
+  index: number;
+  totalCards: number;
+  difficulty: DifficultyLevel;
   onClick: (card: CardItem) => void;
   disabled: boolean;
 }
 
-export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
+export const Card: React.FC<CardProps> = ({
+  card,
+  index,
+  totalCards,
+  difficulty,
+  onClick,
+  disabled,
+}) => {
   const isClickable = !card.isFlipped && !card.isMatched && !card.isMatching && !disabled;
 
   const handleClick = () => {
@@ -22,14 +32,53 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
     }
   };
 
+  // Keyboard navigation handler across the card grid
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+      return;
+    }
+
+    // Determine current columns based on responsive breakpoints
+    const isWide = typeof window !== 'undefined' ? window.innerWidth >= 640 : true;
+    const cols = difficulty === 'EASY' ? (isWide ? 4 : 3) : (isWide ? 5 : 4);
+
+    let targetIdx: number | null = null;
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      targetIdx = (index + 1) % totalCards;
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      targetIdx = (index - 1 + totalCards) % totalCards;
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      targetIdx = (index + cols) % totalCards;
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      targetIdx = (index - cols + totalCards) % totalCards;
+    }
+
+    if (targetIdx !== null) {
+      const targetEl = document.getElementById(`game-card-${targetIdx}`);
+      if (targetEl) {
+        targetEl.focus();
+      }
+    }
+  };
+
   // If already matched, render a fixed placeholder slot preserving the exact grid layout
   if (card.isMatched) {
     return (
       <div
-        className="w-full aspect-[3/4] rounded-xl sm:rounded-2xl border border-dashed border-cyan-400/20 bg-slate-900/20 flex items-center justify-center p-2 opacity-25 select-none transition-all duration-300 pointer-events-none"
-        aria-hidden="true"
+        id={`game-card-${index}`}
+        tabIndex={-1}
+        role="gridcell"
+        aria-label={`Thẻ số ${index + 1}: Đã ghép đúng ${card.device.name}`}
+        className="w-full aspect-[3/4] rounded-xl sm:rounded-2xl border border-dashed border-cyan-400/25 bg-slate-900/30 flex items-center justify-center p-2 opacity-30 select-none transition-all duration-300 pointer-events-none"
       >
-        <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-cyan-400/30 flex items-center justify-center text-cyan-300/40 text-xs sm:text-sm font-mono font-bold">
+        <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-cyan-400/40 flex items-center justify-center text-cyan-300 text-xs sm:text-sm font-mono font-bold shadow-[0_0_8px_rgba(34,211,238,0.2)]">
           ✓
         </div>
       </div>
@@ -38,33 +87,33 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
 
   // Determine dynamic font size for device names to guarantee no clipping or wrapping
   const getDeviceNameStyle = (name: string) => {
-    if (name.length > 14) {
-      // Long names like "MÁY TÍNH XÁCH TAY", "CHUỘT MÁY TÍNH"
-      return 'text-[9px] xs:text-[10px] sm:text-[11px] md:text-xs tracking-tight';
+    if (name.length > 15) {
+      // Long names like "MÁY TÍNH XÁCH TAY", "THIẾT BỊ NHỚ USB"
+      return 'text-[7.5px] xs:text-[9px] sm:text-[10px] md:text-xs tracking-tight';
     }
-    if (name.length > 9) {
-      // Medium names like "THÙNG MÁY TÍNH", "BỘ PHÁT WI-FI"
-      return 'text-[10px] xs:text-[11px] sm:text-xs md:text-sm tracking-normal';
+    if (name.length > 10) {
+      // Medium names like "CHUỘT MÁY TÍNH", "THÙNG MÁY TÍNH", "BỘ PHÁT WI-FI"
+      return 'text-[8.5px] xs:text-[10px] sm:text-[11px] md:text-xs tracking-tight';
     }
-    // Short names like "MÀN HÌNH", "BÀN PHÍM", "MÁY IN", "Ổ CỨNG", "USB", "CHIP CPU"
-    return 'text-[11px] xs:text-xs sm:text-sm md:text-base tracking-wide';
+    // Short names like "MÀN HÌNH", "BÀN PHÍM", "MÁY IN", "Ổ CỨNG", "CHIP CPU"
+    return 'text-[10px] xs:text-xs sm:text-sm md:text-base tracking-normal';
   };
 
   return (
     <div
+      id={`game-card-${index}`}
       onClick={handleClick}
       role="button"
       tabIndex={isClickable ? 0 : -1}
-      aria-label={card.isFlipped ? card.device.name : 'Thẻ úp - Khám phá thiết bị tin học'}
-      onKeyDown={(e) => {
-        if ((e.key === 'Enter' || e.key === ' ') && isClickable) {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
+      aria-label={
+        card.isFlipped
+          ? `Thẻ số ${index + 1}: ${card.device.name} (${card.device.englishName})`
+          : `Thẻ số ${index + 1}: Chưa lật`
+      }
+      onKeyDown={handleKeyDown}
       className={`relative w-full aspect-[3/4] cursor-pointer select-none perspective-1000 group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b071e] rounded-xl sm:rounded-2xl transition-all duration-200 ${
         isClickable
-          ? 'hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/20 active:scale-95'
+          ? 'hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/25 active:scale-95'
           : ''
       } ${card.isMatching ? 'pointer-events-none' : ''}`}
     >
@@ -79,7 +128,7 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
         {/* =========================================
             CARD BACK (Face Down - Tech Neon Arcade)
            ========================================= */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rounded-xl sm:rounded-2xl overflow-hidden border border-purple-400/40 bg-gradient-to-br from-[#221342] via-[#170e30] to-[#0c071b] shadow-md shadow-purple-950/60 flex flex-col items-center justify-between p-2 sm:p-2.5 group-hover:border-purple-300/60 transition-colors">
+        <div className="absolute inset-0 w-full h-full backface-hidden rounded-xl sm:rounded-2xl overflow-hidden border border-purple-400/40 bg-gradient-to-br from-[#221342] via-[#170e30] to-[#0c071b] shadow-md shadow-purple-950/60 flex flex-col items-center justify-between p-2 sm:p-2.5 group-hover:border-purple-300/70 transition-colors">
           {/* Subtle Circuit Grid Texture */}
           <div
             className="absolute inset-0 opacity-25 pointer-events-none"
@@ -102,9 +151,9 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
           {/* Center Stylized Cyber Chip Emblem */}
           <div className="relative my-auto flex flex-col items-center justify-center z-10">
             {/* Outer Hexagon / Shield Frame with Glow */}
-            <div className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 rounded-2xl border border-purple-400/40 flex items-center justify-center bg-gradient-to-br from-purple-900/60 via-[#1e113a] to-[#0c081e] shadow-[0_0_15px_rgba(168,85,247,0.35)] group-hover:shadow-[0_0_22px_rgba(56,189,248,0.5)] transition-shadow">
+            <div className="w-11 h-11 xs:w-13 xs:h-13 sm:w-16 sm:h-16 rounded-2xl border border-purple-400/40 flex items-center justify-center bg-gradient-to-br from-purple-900/60 via-[#1e113a] to-[#0c081e] shadow-[0_0_15px_rgba(168,85,247,0.35)] group-hover:shadow-[0_0_22px_rgba(56,189,248,0.5)] transition-shadow">
               {/* Custom Cyber Microprocessor Emblem SVG */}
-              <svg viewBox="0 0 44 44" className="w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9" fill="none">
+              <svg viewBox="0 0 44 44" className="w-6 h-6 xs:w-7 xs:h-7 sm:w-9 sm:h-9" fill="none">
                 {/* Circuit Traces */}
                 <line x1="22" y1="2" x2="22" y2="10" stroke="#38bdf8" strokeWidth="1.8" strokeLinecap="round" />
                 <line x1="22" y1="34" x2="22" y2="42" stroke="#38bdf8" strokeWidth="1.8" strokeLinecap="round" />
@@ -142,7 +191,7 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
             CARD FRONT (Face Up - Crisp High-Contrast)
            ========================================= */}
         <div
-          className={`absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-xl sm:rounded-2xl overflow-hidden border-2 bg-gradient-to-b from-[#f8fafc] via-[#ffffff] to-[#f1f5f9] shadow-lg flex flex-col items-center justify-between p-2 sm:p-2.5 transition-all duration-300 ${
+          className={`absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-xl sm:rounded-2xl overflow-hidden border-2 bg-gradient-to-b from-[#f8fafc] via-[#ffffff] to-[#f1f5f9] shadow-lg flex flex-col items-center justify-between p-1.5 sm:p-2.5 transition-all duration-300 ${
             card.isMatching
               ? 'border-white ring-4 ring-cyan-300 shadow-[0_0_30px_#22d3ee]'
               : card.isWrong
@@ -161,7 +210,7 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
 
           {/* Top Header Strip: Category Pill and Matched Dot */}
           <div className="w-full flex items-center justify-between z-10 px-0.5">
-            <span className="text-[8px] xs:text-[9px] sm:text-[10px] font-mono font-bold tracking-wider text-sky-800 uppercase truncate">
+            <span className="text-[7.5px] xs:text-[8.5px] sm:text-[10px] font-mono font-bold tracking-wider text-sky-800 uppercase truncate">
               {card.device.category.split(' ')[0]}
             </span>
             <div className="flex items-center gap-1">
@@ -170,7 +219,7 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
           </div>
 
           {/* Main Visual: Unified Vector Illustration (~65% card space) */}
-          <div className="my-auto w-full flex-1 max-h-[68%] flex items-center justify-center p-1 relative z-10">
+          <div className="my-auto w-full flex-1 max-h-[64%] flex items-center justify-center p-0.5 sm:p-1 relative z-10">
             <div className="w-full h-full max-w-[95%] max-h-[95%] flex items-center justify-center drop-shadow-md">
               <DeviceIconComponent
                 deviceKey={card.device.key}
@@ -179,8 +228,8 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
             </div>
           </div>
 
-          {/* Bottom Device Title: Vietnamese, Centered, High-Contrast */}
-          <div className="w-full text-center z-10 bg-slate-900/95 py-1 px-1 sm:px-1.5 rounded-lg border border-slate-700/80 shadow-sm shrink-0">
+          {/* Bottom Device Title: Vietnamese + English, High-Contrast */}
+          <div className="w-full text-center z-10 bg-slate-950/95 py-0.5 sm:py-1 px-1 rounded-md sm:rounded-lg border border-slate-700/80 shadow-sm shrink-0">
             <p
               className={`${getDeviceNameStyle(
                 card.device.name
@@ -189,9 +238,13 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
             >
               {card.device.name}
             </p>
+            <p className="text-[7px] xs:text-[8px] sm:text-[9px] text-cyan-400 font-mono font-medium truncate">
+              {card.device.englishName}
+            </p>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
