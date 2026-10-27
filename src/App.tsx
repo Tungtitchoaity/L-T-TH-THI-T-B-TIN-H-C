@@ -95,10 +95,31 @@ export default function App() {
   const [timeBonus, setTimeBonus] = useState(0);
   const [timeLeft, setTimeLeft] = useState(DIFFICULTY_CONFIGS.STANDARD.timeSeconds);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [classroomMode, setClassroomMode] = useState<boolean>(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        return window.localStorage.getItem('lat_the_tin_hoc_presentation_mode') === 'true';
+      }
+    } catch {}
+    return false;
+  });
   const [stats, setStats] = useState<GameStats>(() => StatsStorage.getStats());
   const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntry[]>(() =>
     LeaderboardStorage.getEntries()
   );
+
+  // Toggle Classroom Presentation Mode (P08 Requirement 6)
+  const handleToggleClassroomMode = useCallback(() => {
+    setClassroomMode((prev) => {
+      const next = !prev;
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          window.localStorage.setItem('lat_the_tin_hoc_presentation_mode', String(next));
+        }
+      } catch {}
+      return next;
+    });
+  }, []);
 
   // P06: Educational Knowledge & Study Mode States
   const [activeKnowledgeDevice, setActiveKnowledgeDevice] = useState<DeviceInfo | null>(null);
@@ -573,24 +594,32 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen arcade-bg text-slate-100 flex flex-col justify-between selection:bg-fuchsia-500 selection:text-white font-['Plus_Jakarta_Sans'] relative overflow-x-hidden">
-      {/* Background Decorative Ambient Particles & Diagonal Glow Rays */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-purple-600/10 blur-3xl" />
-        <div className="absolute top-1/3 -right-40 w-96 h-96 rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute -bottom-40 left-1/3 w-96 h-96 rounded-full bg-pink-500/10 blur-3xl" />
+    <div
+      className={`min-h-screen ${
+        classroomMode ? 'bg-[#070414]' : 'arcade-bg'
+      } text-slate-100 flex flex-col justify-between selection:bg-fuchsia-500 selection:text-white font-['Plus_Jakarta_Sans'] relative overflow-x-hidden`}
+    >
+      {/* Background Decorative Ambient Particles & Diagonal Glow Rays (Hidden in Classroom Mode) */}
+      {!classroomMode && (
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+          <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-purple-600/10 blur-3xl" />
+          <div className="absolute top-1/3 -right-40 w-96 h-96 rounded-full bg-cyan-500/10 blur-3xl" />
+          <div className="absolute -bottom-40 left-1/3 w-96 h-96 rounded-full bg-pink-500/10 blur-3xl" />
 
-        <div className="absolute top-[18%] left-[12%] w-2 h-2 rounded-full bg-cyan-400/30 particle-drift-1" />
-        <div className="absolute top-[32%] right-[16%] w-2.5 h-2.5 rounded-full bg-fuchsia-400/25 particle-drift-2" />
-        <div className="absolute bottom-[24%] left-[22%] w-1.5 h-1.5 rounded-full bg-purple-400/30 particle-drift-3" />
-        <div className="absolute top-[68%] right-[28%] w-2 h-2 rounded-full bg-cyan-300/25 particle-drift-1" />
-      </div>
+          <div className="absolute top-[18%] left-[12%] w-2 h-2 rounded-full bg-cyan-400/30 particle-drift-1" />
+          <div className="absolute top-[32%] right-[16%] w-2.5 h-2.5 rounded-full bg-fuchsia-400/25 particle-drift-2" />
+          <div className="absolute bottom-[24%] left-[22%] w-1.5 h-1.5 rounded-full bg-purple-400/30 particle-drift-3" />
+          <div className="absolute top-[68%] right-[28%] w-2 h-2 rounded-full bg-cyan-300/25 particle-drift-1" />
+        </div>
+      )}
 
       {/* Top Header */}
       <Header
         gameState={gameState}
         soundEnabled={soundEnabled}
         onToggleSound={handleToggleSound}
+        classroomMode={classroomMode}
+        onToggleClassroomMode={handleToggleClassroomMode}
         onOpenHelp={() => setIsHelpOpen(true)}
         onOpenStudy={() => setIsStudyOpen(true)}
         onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
@@ -615,10 +644,16 @@ export default function App() {
           onRestart={handleRestart}
         />
 
-        {/* High-Contrast Central Card Table Frame */}
+        {/* High-Contrast Central Card Table Frame (Expanded in Classroom Mode) */}
         <div
           className={`w-full ${
-            difficulty === 'EASY' ? 'max-w-3xl' : 'max-w-5xl'
+            classroomMode
+              ? difficulty === 'EASY'
+                ? 'max-w-4xl'
+                : 'max-w-6xl'
+              : difficulty === 'EASY'
+              ? 'max-w-3xl'
+              : 'max-w-5xl'
           } px-2 sm:px-4 py-1 sm:py-2 mx-auto`}
         >
           <div className="p-2 sm:p-3.5 rounded-2xl sm:rounded-3xl bg-[#0e0826]/75 border border-purple-500/25 backdrop-blur-sm shadow-2xl relative">

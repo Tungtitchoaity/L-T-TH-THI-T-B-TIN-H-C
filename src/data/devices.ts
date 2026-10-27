@@ -110,7 +110,7 @@ export const COMPUTER_DEVICES: Record<DeviceKey, DeviceInfo> = {
   },
   hard_drive: {
     key: 'hard_drive',
-    name: 'Ổ CỨNG',
+    name: 'Ổ CỨNG HDD/SSD',
     englishName: 'HDD/SSD Storage',
     shortDesc: 'Thiết bị lưu trữ dữ liệu HDD / SSD',
     category: 'Bộ nhớ & Lưu trữ (Storage)',
@@ -127,7 +127,7 @@ export const COMPUTER_DEVICES: Record<DeviceKey, DeviceInfo> = {
   },
   usb: {
     key: 'usb',
-    name: 'USB',
+    name: 'USB FLASH DRIVE',
     englishName: 'USB Flash Drive',
     shortDesc: 'USB flash drive nhỏ gọn tiện lợi',
     category: 'Bộ nhớ & Lưu trữ (Storage)',
@@ -144,7 +144,7 @@ export const COMPUTER_DEVICES: Record<DeviceKey, DeviceInfo> = {
   },
   wifi_router: {
     key: 'wifi_router',
-    name: 'BỘ PHÁT WI-FI',
+    name: 'BỘ ĐỊNH TUYẾN WI-FI',
     englishName: 'Wi-Fi Router',
     shortDesc: 'Router có ăng-ten và phát sóng vô tuyến',
     category: 'Thiết bị mạng (Network)',
@@ -161,7 +161,7 @@ export const COMPUTER_DEVICES: Record<DeviceKey, DeviceInfo> = {
   },
   cpu_chip: {
     key: 'cpu_chip',
-    name: 'CHIP CPU',
+    name: 'BỘ XỬ LÝ CPU',
     englishName: 'CPU Processor',
     shortDesc: 'Vi xử lý vuông có chân tiếp xúc xung quanh',
     category: 'Bộ xử lý (Processing)',

@@ -4,13 +4,15 @@
  */
 
 import React from 'react';
-import { Volume2, VolumeX, HelpCircle, ArrowLeft, Trophy, GraduationCap } from 'lucide-react';
+import { Volume2, VolumeX, HelpCircle, ArrowLeft, Trophy, GraduationCap, Tv } from 'lucide-react';
 import { GameState } from '../types';
 
 interface HeaderProps {
   gameState: GameState;
   soundEnabled: boolean;
   onToggleSound: () => void;
+  classroomMode: boolean;
+  onToggleClassroomMode: () => void;
   onOpenHelp: () => void;
   onOpenStudy: () => void;
   onOpenLeaderboard: () => void;
@@ -21,6 +23,8 @@ export const Header: React.FC<HeaderProps> = ({
   gameState,
   soundEnabled,
   onToggleSound,
+  classroomMode,
+  onToggleClassroomMode,
   onOpenHelp,
   onOpenStudy,
   onOpenLeaderboard,
@@ -59,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="hidden sm:block w-2.5 h-2.5 rotate-45 bg-fuchsia-400 shadow-[0_0_8px_#e879f9]" />
         </div>
 
-        {/* Right: Sound, Leaderboard, Study, Help */}
+        {/* Right: Sound, Presentation Mode, Leaderboard, Study, Help */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Sound Toggle */}
           <button
@@ -73,6 +77,26 @@ export const Header: React.FC<HeaderProps> = ({
             ) : (
               <VolumeX className="w-4 h-4 text-slate-400" />
             )}
+          </button>
+
+          {/* Classroom Presentation Mode Toggle (P08 Requirement 6) */}
+          <button
+            onClick={onToggleClassroomMode}
+            title={
+              classroomMode
+                ? 'Chế độ máy chiếu lớp học: ĐANG BẬT (Thẻ lớn, tương phản cao)'
+                : 'Bật chế độ máy chiếu lớp học (Phóng to thẻ, giảm hiệu ứng nền)'
+            }
+            className={`flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg border transition-all text-xs font-semibold ${
+              classroomMode
+                ? 'bg-cyan-950/90 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.4)]'
+                : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border-slate-700'
+            }`}
+          >
+            <Tv className="w-4 h-4 text-cyan-400" />
+            <span className="hidden xl:inline">
+              {classroomMode ? 'Máy chiếu: BẬT' : 'Máy chiếu'}
+            </span>
           </button>
 
           {/* Leaderboard Button */}
@@ -98,7 +122,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Help Modal */}
           <button
             onClick={onOpenHelp}
-            title="Hướng dẫn luật chơi"
+            title="Hướng dẫn luật chơi & lớp học"
             className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-cyan-900/60 text-slate-200 hover:text-white border border-slate-700 hover:border-cyan-500/40 transition-colors text-xs font-medium"
           >
             <HelpCircle className="w-4 h-4 text-cyan-400" />

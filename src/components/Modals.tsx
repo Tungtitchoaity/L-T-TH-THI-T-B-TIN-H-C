@@ -891,7 +891,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
 };
 
 /* ========================================================
-   6. HELP MODAL (HƯỚNG DẪN)
+   6. HELP MODAL (HƯỚNG DẪN SỬ DỤNG CHI TIẾT CHO LỚP HỌC)
    ======================================================== */
 interface HelpModalProps {
   isOpen: boolean;
@@ -903,7 +903,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-[#150d30] border border-purple-500/40 rounded-2xl p-5 sm:p-6 shadow-2xl text-slate-100 max-h-[88vh] overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-[#140c2e] border-2 border-purple-500/40 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl text-slate-100 max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-purple-900/40 transition-colors"
@@ -912,39 +912,141 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
           <X className="w-5 h-5" />
         </button>
 
-        <h3 className="text-lg sm:text-xl font-bold text-cyan-300 mb-3 flex items-center gap-2 font-['Outfit']">
-          <HelpCircle className="w-5 h-5 text-cyan-400" />
-          <span>HƯỚNG DẪN & HỆ THỐNG ĐIỂM</span>
-        </h3>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-xl bg-cyan-950/80 border border-cyan-400/50 flex items-center justify-center text-cyan-300">
+            <HelpCircle className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-pink-400 font-['Outfit'] uppercase">
+              HƯỚNG DẪN SỬ DỤNG TRÒ CHƠI
+            </h3>
+            <p className="text-[11px] text-slate-400">Tài liệu hướng dẫn dành cho giáo viên và học sinh môn Tin học</p>
+          </div>
+        </div>
 
-        <div className="space-y-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
-          <div className="p-2.5 bg-purple-950/40 border border-purple-500/20 rounded-xl">
-            <strong className="text-amber-400 block mb-1">1. Hệ thống tính điểm:</strong>
+        <div className="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+          {/* Section 1: Mục tiêu trò chơi */}
+          <div className="p-3 bg-purple-950/40 border border-purple-500/20 rounded-xl">
+            <strong className="text-cyan-400 block mb-1 font-['Outfit'] uppercase text-xs sm:text-sm">
+              🎯 1. Mục tiêu trò chơi:
+            </strong>
+            <p className="text-xs text-slate-300">
+              Rèn luyện trí nhớ và củng cố kiến thức nhận biết 10 thiết bị phần cứng máy tính cơ bản thuộc chương trình Tin học THCS & THPT. Người chơi lật mở các thẻ để tìm các cặp hình ảnh giống nhau trước khi hết thời gian quy định.
+            </p>
+          </div>
+
+          {/* Section 2: Cách bắt đầu & Thông tin người chơi */}
+          <div className="p-3 bg-purple-950/40 border border-purple-500/20 rounded-xl">
+            <strong className="text-fuchsia-400 block mb-1 font-['Outfit'] uppercase text-xs sm:text-sm">
+              🚀 2. Cách bắt đầu & Nhập thông tin:
+            </strong>
+            <p className="text-xs text-slate-300">
+              Nhập tên hoặc biệt danh và lớp của bạn (không bắt buộc) tại màn hình bắt đầu. Trò chơi không yêu cầu tài khoản hay thông tin cá nhân nhạy cảm. Chọn một trong 3 độ khó phù hợp rồi nhấn <strong className="text-white">“BẮT ĐẦU CHƠI NGAY”</strong>.
+            </p>
+          </div>
+
+          {/* Section 3: Quy tắc lật thẻ & Khóa so sánh */}
+          <div className="p-3 bg-purple-950/40 border border-purple-500/20 rounded-xl">
+            <strong className="text-amber-400 block mb-1 font-['Outfit'] uppercase text-xs sm:text-sm">
+              🃏 3. Thao tác lật và ghép cặp:
+            </strong>
             <ul className="list-disc pl-4 space-y-1 text-xs">
-              <li><strong className="text-emerald-400">Mỗi cặp đúng:</strong> +100 điểm.</li>
-              <li><strong className="text-rose-400">Mỗi lần ghép sai:</strong> -10 điểm (điểm không bao giờ âm).</li>
-              <li><strong className="text-cyan-400">Thưởng thời gian khi thắng:</strong> +5 điểm cho mỗi giây còn lại trên đồng hồ!</li>
+              <li>Nhấp chọn thẻ thứ nhất, sau đó nhấp chọn thẻ thứ hai để so sánh.</li>
+              <li><strong className="text-emerald-400">Nếu khớp nhau:</strong> Hai thẻ phát sáng hào quang trắng-cyan và chuyển về ô lưu vị trí thành công.</li>
+              <li><strong className="text-rose-400">Nếu không khớp:</strong> Hai thẻ rung nhẹ và tự động úp lại sau 0.7 giây để bạn kịp ghi nhớ.</li>
+              <li><strong className="text-cyan-300">Cơ chế an toàn:</strong> Hệ thống tự động khóa thao tác khi đang so sánh, ngăn chặn hiện tượng lật thẻ thứ 3 hoặc spam click.</li>
             </ul>
           </div>
 
-          <div className="p-2.5 bg-purple-950/40 border border-purple-500/20 rounded-xl">
-            <strong className="text-cyan-400 block mb-1">2. Các cấp độ chơi:</strong>
-            <ul className="list-disc pl-4 space-y-1 text-xs">
-              <li><strong className="text-emerald-400">DỄ:</strong> 12 thẻ (6 cặp), thời gian 90 giây.</li>
-              <li><strong className="text-cyan-400">TIÊU CHUẨN:</strong> 20 thẻ (10 cặp), thời gian 60 giây.</li>
-              <li><strong className="text-rose-400">THỬ THÁCH:</strong> 20 thẻ (10 cặp), thời gian 40 giây.</li>
+          {/* Section 4: Tính điểm & Thưởng thời gian */}
+          <div className="p-3 bg-purple-950/40 border border-purple-500/20 rounded-xl">
+            <strong className="text-emerald-400 block mb-1 font-['Outfit'] uppercase text-xs sm:text-sm">
+              ⭐ 4. Cách tính điểm chi tiết:
+            </strong>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1.5">
+              <div className="bg-[#0b071e] p-2 rounded-lg border border-emerald-500/30 text-center">
+                <span className="text-[10px] text-slate-400 block">Ghép đúng cặp</span>
+                <span className="text-emerald-400 font-mono font-bold text-sm">+100 điểm</span>
+              </div>
+              <div className="bg-[#0b071e] p-2 rounded-lg border border-rose-500/30 text-center">
+                <span className="text-[10px] text-slate-400 block">Ghép sai cặp</span>
+                <span className="text-rose-400 font-mono font-bold text-sm">-10 điểm (≥ 0)</span>
+              </div>
+              <div className="bg-[#0b071e] p-2 rounded-lg border border-amber-500/30 text-center">
+                <span className="text-[10px] text-slate-400 block">Thưởng thắng cuộc</span>
+                <span className="text-amber-300 font-mono font-bold text-sm">+5 điểm/giây dư</span>
+              </div>
+            </div>
+            <p className="text-[11px] text-slate-400 mt-2">
+              * Điểm số không bao giờ bị trừ xuống dưới 0. Điểm được cập nhật ngay lập tức sau mỗi lượt.
+            </p>
+          </div>
+
+          {/* Section 5: Cấp độ chơi */}
+          <div className="p-3 bg-purple-950/40 border border-purple-500/20 rounded-xl">
+            <strong className="text-cyan-300 block mb-1 font-['Outfit'] uppercase text-xs sm:text-sm">
+              🎚️ 5. Ba cấp độ thử thách:
+            </strong>
+            <div className="space-y-1 text-xs">
+              <p><strong className="text-emerald-400">DỄ (90 giây):</strong> 12 thẻ (chọn ngẫu nhiên 6 cặp), lưới 3 hàng × 4 cột.</p>
+              <p><strong className="text-cyan-400">TIÊU CHUẨN (60 giây):</strong> 20 thẻ (đủ 10 cặp thiết bị), lưới 4 hàng × 5 cột.</p>
+              <p><strong className="text-rose-400">THỬ THÁCH (40 giây):</strong> 20 thẻ (đủ 10 cặp), thời gian ngắn đòi hỏi tốc độ cao.</p>
+            </div>
+          </div>
+
+          {/* Section 6: Bảng kiến thức & Câu hỏi củng cố */}
+          <div className="p-3 bg-purple-950/40 border border-purple-500/20 rounded-xl">
+            <strong className="text-fuchsia-300 block mb-1 font-['Outfit'] uppercase text-xs sm:text-sm">
+              💡 6. Thẻ kiến thức & Câu hỏi củng cố:
+            </strong>
+            <p className="text-xs text-slate-300">
+              Sau khi ghép đúng một cặp mới, hộp thoại kiến thức sẽ xuất hiện cung cấp thông tin tên tiếng Việt, tên tiếng Anh, chức năng và 1 câu hỏi trắc nghiệm củng cố (1 đáp án đúng, 2 đáp án nhiễu). Đồng hồ đếm ngược được <strong className="text-cyan-300">tạm dừng hoàn toàn</strong> trong thời gian đọc để học sinh yên tâm suy nghĩ.
+            </p>
+          </div>
+
+          {/* Section 7: Bảng xếp hạng & Chế độ ôn tập */}
+          <div className="p-3 bg-purple-950/40 border border-purple-500/20 rounded-xl">
+            <strong className="text-amber-300 block mb-1 font-['Outfit'] uppercase text-xs sm:text-sm">
+              🏆 7. Bảng xếp hạng & Ôn tập 10 thiết bị:
+            </strong>
+            <p className="text-xs text-slate-300 mb-1">
+              - <strong className="text-amber-400">Xếp hạng:</strong> Lưu giữ Top 100 ván chơi xuất sắc nhất, sắp xếp theo điểm số cao nhất và thời gian hoàn thành nhanh nhất. Có bộ lọc theo từng cấp độ.
+            </p>
+            <p className="text-xs text-slate-300">
+              - <strong className="text-cyan-400">Ôn tập:</strong> Chế độ tự học cho phép duyệt qua toàn bộ 10 thiết bị kèm hình minh họa và câu hỏi trắc nghiệm tự luyện bất kỳ lúc nào mà không bị giới hạn thời gian.
+            </p>
+          </div>
+
+          {/* Section 8: Minh bạch lưu trữ dữ liệu */}
+          <div className="p-3 bg-rose-950/30 border border-rose-500/30 rounded-xl">
+            <strong className="text-rose-300 block mb-1 font-['Outfit'] uppercase text-xs sm:text-sm">
+              🔒 8. Lưu trữ kết quả & Bảo mật (Minh bạch):
+            </strong>
+            <ul className="list-disc pl-4 space-y-1 text-xs text-slate-300">
+              <li>Toàn bộ dữ liệu điểm số, lịch sử và thông tin người chơi được lưu trữ <strong className="text-white">cục bộ trong bộ nhớ trình duyệt (LocalStorage)</strong> của thiết bị đang dùng.</li>
+              <li>Dữ liệu <strong className="text-rose-400">KHÔNG</strong> được chia sẻ hoặc tự động đồng bộ sang các máy tính/điện thoại khác.</li>
+              <li>Nếu xóa lịch sử duyệt web hoặc đổi sang trình duyệt khác, bảng xếp hạng sẽ được đặt lại về mặc định.</li>
+              <li>Bạn có thể chủ động bấm nút <strong className="text-rose-400">“Xóa lịch sử”</strong> trong bảng xếp hạng bất cứ lúc nào.</li>
             </ul>
           </div>
 
-          <div className="p-2.5 bg-purple-950/40 border border-purple-500/20 rounded-xl">
-            <strong className="text-fuchsia-400 block mb-1">3. Thao tác lật thẻ:</strong>
-            Nhấp thẻ thứ nhất, sau đó nhấp thẻ thứ hai. Thao tác lật thẻ thứ 3 sẽ bị khóa khi đang so sánh.
+          {/* Section 9: Phím tắt & Chế độ máy chiếu */}
+          <div className="p-3 bg-cyan-950/40 border border-cyan-500/30 rounded-xl">
+            <strong className="text-cyan-300 block mb-1 font-['Outfit'] uppercase text-xs sm:text-sm">
+              ⌨️ 9. Phím tắt & Chế độ máy chiếu:
+            </strong>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <p>• Phím mũi tên (←, →, ↑, ↓): Di chuyển giữa các ô thẻ.</p>
+              <p>• Phím Space / Enter: Lật thẻ đang chọn.</p>
+              <p>• Phím Esc: Đóng nhanh popup hoặc tạm dừng/tiếp tục.</p>
+              <p>• Nút Máy chiếu: Tối ưu thẻ lớn và tương phản cho máy chiếu lớp học.</p>
+            </div>
           </div>
         </div>
 
         <button
           onClick={onClose}
-          className="mt-4 w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-colors"
+          className="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold text-sm uppercase tracking-wider transition-all shadow-lg shadow-purple-900/40 cursor-pointer"
         >
           ĐÃ HIỂU, ĐÓNG HƯỚNG DẪN
         </button>
